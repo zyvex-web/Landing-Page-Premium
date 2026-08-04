@@ -23,6 +23,7 @@ function boot() {
   renderOferta(cfg.oferta, cfg.marca);
   renderTestimonios(cfg.testimonios);
   renderFaq(cfg.faq);
+  renderContacto(cfg.contacto, cfg.marca);
   renderCierre(cfg.cierre, cfg.marca);
   renderFooter(cfg.marca);
   setupWhatsApp(cfg.marca);
@@ -137,6 +138,41 @@ function renderFaq(f) {
   $("#faqMount").append(list);
 }
 
+const ICONS = {
+  facebook: '<path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.7-1.6 1.5V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/>',
+  instagram: '<path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11zm0 2a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM18 6.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>',
+  tiktok: '<path d="M16 3c.6 2.3 2.2 4 4.5 4.6V11c-1.8-.1-3.5-.7-4.9-1.7v5.6A5.9 5.9 0 1 1 10 9.1v3a2.9 2.9 0 1 0 2 2.7V3h4z"/>'
+};
+function socialHTML(redes) {
+  if (!redes) return "";
+  const items = Object.entries(redes).filter(([k, v]) => v && ICONS[k])
+    .map(([k, v]) => `<a href="${v}" target="_blank" rel="noopener" aria-label="${k}"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">${ICONS[k]}</svg></a>`).join("");
+  return items ? `<div class="socials">${items}</div>` : "";
+}
+
+function renderContacto(c, m) {
+  if (!c) return;
+  head(c, "#contactoMount");
+  const info = `<div class="form-info"><h3>${c.infoTitulo || "Escríbenos"}</h3><p>${c.infoTexto || ""}</p>
+    <ul class="form-contact">${m.email ? `<li>✉️ ${m.email}</li>` : ""}${m.whatsapp ? `<li>📱 +${m.whatsapp.replace(/\D/g, "")}</li>` : ""}</ul>${socialHTML(m.redes)}</div>`;
+  const form = `<form class="form-box" novalidate>
+      <div class="frow"><input required name="nombre" placeholder="Tu nombre"><input required type="email" name="email" placeholder="Tu correo"></div>
+      <textarea required name="mensaje" rows="4" placeholder="Cuéntanos qué necesitas..."></textarea>
+      <button type="submit" class="btn btn-primary">${c.boton || "Enviar mensaje"}</button>
+      <p class="form-ok" style="display:none">✅ ¡Gracias! Tu mensaje se preparó. Te contactaremos pronto.</p></form>`;
+  const grid = el(`<div class="form-grid reveal">${info}${form}</div>`);
+  const f = grid.querySelector("form");
+  f.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!f.checkValidity()) { f.reportValidity(); return; }
+    const d = new FormData(f);
+    window.open(waLink(m, `Hola ${m.nombre}! Soy ${d.get("nombre")} (${d.get("email")}).\n${d.get("mensaje")}`), "_blank");
+    grid.querySelector(".form-ok").style.display = "block";
+    f.reset();
+  });
+  $("#contactoMount").append(grid);
+}
+
 function renderCierre(c, m) {
   const wa = waLink(m, `Hola! ${c.cta || "Quiero más información"}`);
   $("#cierreMount").append(el(`
@@ -148,6 +184,7 @@ function renderCierre(c, m) {
 
 function renderFooter(m) {
   $("#footerMount").append(el(`<a href="#inicio" class="brand">${m.nombre}<span class="dot">.</span></a>`));
+  if (m.redes) $("#footerMount").append(el(socialHTML(m.redes) || "<span></span>"));
   $("#footerMount").append(el(`<small>© 2026 ${m.nombre}. ${m.eslogan || ""}</small>`));
   $("#footerMount").append(el(`<span class="made">Demo por <a href="https://zyvexweby.com" target="_blank" rel="noopener">ZyvexWeb</a></span>`));
 }

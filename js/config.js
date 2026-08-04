@@ -9,6 +9,7 @@ window.AURA_CONFIG = {
     eslogan: "Skincare consciente",
     whatsapp: "51999999999",
     email: "hola@auraskin.com",
+    redes: { instagram: "https://instagram.com/", facebook: "https://facebook.com/", tiktok: "https://tiktok.com/" },
     colores: {
       primario: "#7c5cff",
       secundario: "#ff7eb3",
@@ -80,6 +81,13 @@ window.AURA_CONFIG = {
       { q: "¿Hacen envíos a todo el país?", a: "Sí, enviamos a todo el Perú. En Lima llega en 24h y a provincia en 48-72h." },
       { q: "¿Tiene garantía?", a: "Sí. Si no te encanta, te devolvemos tu dinero dentro de los primeros 15 días." }
     ]
+  },
+  contacto: {
+    etiqueta: "Contacto",
+    titulo: "¿Tienes dudas?",
+    infoTitulo: "Escríbenos",
+    infoTexto: "Déjanos tu mensaje y te respondemos en menos de 24h. También puedes escribirnos por WhatsApp.",
+    boton: "Enviar mensaje"
   },
   cierre: {
     titulo: "Tu mejor piel empieza hoy",
